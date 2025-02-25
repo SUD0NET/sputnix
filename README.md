@@ -1,2 +1,2 @@
 # sputnix
-Soviet Operating System 
+"Soviet" Operating System 
