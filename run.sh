@@ -1,0 +1,2 @@
+echo "started"
+echo "HELLO"
