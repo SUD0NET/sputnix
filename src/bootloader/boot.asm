@@ -1,52 +1,53 @@
-[org 0x7c00]
+[org 0x7c00]               ; Bootloader starts at 0x7c00
 
-; USSR Bootloader
-; Features: Menu system, keyboard input, memory map display
-
+; Print boot message
     mov ah, 0x0e           ; BIOS teletype output
-    mov bx, msg_booting    ; Load boot message
-    call puts              ; Print message
+    mov si, msg_booting    ; Load boot message pointer
+.print:
+    lodsb                  ; Load string byte into AL
+    or al, al              ; Check for null terminator
+    jz .menu               ; If null, jump to menu
+    int 0x10               ; Print character
+    jmp .print
 
-menu_loop:
-    mov bx, menu_text      ; Print menu
-    call puts
-    call get_key           ; Get user input
-    cmp al, '1'            ; Option 1: Boot UKERN
-    je boot_ukern
-    cmp al, '2'            ; Option 2: Display memory map
-    je show_mem_map
-    jmp menu_loop          ; Loop for invalid input
+.menu:
+    ; Load kernel
+    mov ax, 0x1000         ; load kernel at address 0x1000
+    mov es, ax             ; set extra segment to 0x1000
+    xor bx, bx             ; offset within the segment
+    mov ah, 0x02           ; BIOS read function
+    mov al, 1              ; number of sectors to read
+    mov ch, 0              ; cylinder 0
+    mov dh, 0              ; head 0
+    mov cl, 2              ; sector 2 (kernel start)
+    int 0x13               ; BIOS interrupt to read disk
+    jc .error              ; jump if carry flag is set
 
-boot_ukern:
-    mov bx, msg_ukern      ; Print booting UKERN
-    call puts
-    jmp $
+    ;mov bx, msg_jumping
+	;call puts
+    
+    ; Jump to kernel
+    jmp 0x1000:0x0000      ; segment:Offset of kernel
 
-show_mem_map:
-    mov bx, msg_mem_map    ; Print memory map header
-    call puts
-    int 0x15               ; Get memory map (BIOS interrupt)
-    jmp menu_loop
+.error:
+    mov si, msg_error      ; Load error message pointer
+    call puts              ; Print error message
+    hlt                    ; Halt CPU
 
 puts:
-    mov al, [bx]           ; Load character
-    cmp al, 0              ; Check for null terminator
-    je return
+    lodsb                  ; Load string byte into AL
+    or al, al              ; Check for null terminator
+    jz .done               ; If null, return
+    mov ah, 0x0e           ; BIOS teletype output
     int 0x10               ; Print character
-    inc bx
     jmp puts
-return:
+.done:
     ret
 
-get_key:
-    mov ah, 0x00           ; BIOS keyboard input
-    int 0x16               ; Get keystroke
-    ret
+msg_booting db "Booting kernel...", 0
+msg_error   db "Error loading kernel!", 0
+msg_jumping db "jumping ", 0
 
-msg_booting: db "USSR Bootloader v1.0", 0
-menu_text:   db 0xd, 0xa, "1. Boot UKERN", 0xd, 0xa, "2. Show Memory Map", 0xd, 0xa, "Select: ", 0
-msg_ukern:   db 0xd, 0xa, "Booting UKERN...", 0
-msg_mem_map: db 0xd, 0xa, "Memory Map:", 0xd, 0xa, 0
-
+; Bootloader signature
 times 510-($-$$) db 0
-db 0x55, 0xaa
+dw 0xaa55
