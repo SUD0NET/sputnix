@@ -1,7 +1,7 @@
 # sputnix
 "Soviet" Operating System 
 
-![sputnix](./sputnix.png)
+![sputnix](./SPUTNIX.png)
 
 To setup toolchain, use:
 ```
