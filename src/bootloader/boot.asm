@@ -44,9 +44,9 @@ get_key:
     ret
 
 msg_booting: db "USSR Bootloader v1.0", 0
-menu_text:   db "\n1. Boot UKERN\n2. Show Memory Map\nSelect: ", 0
-msg_ukern:   db "\nBooting UKERN...", 0
-msg_mem_map: db "\nMemory Map:\n", 0
+menu_text:   db 0xd, 0xa, "1. Boot UKERN", 0xd, 0xa, "2. Show Memory Map", 0xd, 0xa, "Select: ", 0
+msg_ukern:   db 0xd, 0xa, "Booting UKERN...", 0
+msg_mem_map: db 0xd, 0xa, "Memory Map:", 0xd, 0xa, 0
 
 times 510-($-$$) db 0
-    db 0x55, 0xaa
+db 0x55, 0xaa
