@@ -2,7 +2,7 @@ echo -n "doing the dishes... "
 
 rm -rf build
 mkdir build
-(make -C src/kernel clean)
+(make -C src/kernel clean) > clean.log
 
 echo "done"
 echo -n "compiling bootloader... "
@@ -18,11 +18,12 @@ mv src/kernel/kernel.elf build/kernel.elf
 
 echo "done"
 
-echo "build state"
-ls build
+#echo "BUILD DIR STATE: "
+# ls build
 
-echo "making new diskimage... "
+echo -n "making new diskimage... "
 
+(
 kernel_size=$(wc -c < build/kernel)
 kernel_sectors=$(( ($kernel_size + 511) / 512 ))
 printf %02x $kernel_sectors | xxd -r -p | dd of=build/boot bs=1 seek=2 count=1 conv=notrunc
@@ -31,7 +32,7 @@ cp build/boot ./os.img
 cat build/kernel >> os.img
 dd if=/dev/zero bs=1 count=512 >> os.img
 mv os.img build/os.img
-
+) 2>/dev/null
 echo "done"
 
-echo "BUILD READY"
+echo "build finished."
