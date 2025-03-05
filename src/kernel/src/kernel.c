@@ -3,46 +3,21 @@
 // WILL BE CHANGED
 // THIS IS FOR TESTING ONLY
 
-#define VGA_START 0xB8000
-#define VGA_EXTENT 80 * 25
-#define STYLE_WB 0x0F
-
-typedef struct __attribute__((packed)) {
-    char character;
-    char style;
-} vga_char;
-
-volatile vga_char *TEXT_AREA = (vga_char*) VGA_START;
-
-void clearwin(){
-    vga_char clear_char = {
-        .character=' ',
-        .style=STYLE_WB
-    };
-
-    for(unsigned int i = 0; i < VGA_EXTENT; i++){
-        TEXT_AREA[i] = clear_char;
-    }
-}
-
-void putstr(const char *str){
-    for(unsigned int i = 0; str[i] != '\0'; i++){
-        if (i >= VGA_EXTENT)
-            break;
-
-        vga_char temp = {
-            .character=str[i],
-            .style=STYLE_WB
-        };
-
-        TEXT_AREA[i] = temp;
-    }
-}
+#include <lib/isr.h>
+#include <lib/vga.h>
 
 int main(){
-    clearwin();
-    const char *welcome_msg = "IS THAT MINOS PRIME?!";
-    putstr(welcome_msg);
+    isr_install();
 
+
+    set_cursor_pos(0, 0);
+    clearwin(COLOR_BLK, COLOR_WHT);
+
+    const char *first = "IS THAT MINOS PRIME?!";
+    putstr(first, COLOR_BLK, COLOR_WHT);
+
+    const char *second = "\nI THINK SO \n(spec char test ß)\n";
+    putstr(second, COLOR_RED, COLOR_WHT);
+    
     return 0;
 }
