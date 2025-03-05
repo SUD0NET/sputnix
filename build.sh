@@ -1,18 +1,37 @@
-echo -n "compiling... "
-nasm -f bin -o build/bootloader.bin src/bootloader/boot.asm
-nasm -f elf -o build/kernel_entry.o src/kernel/kernel_entry.asm
-toolchain/bin/i386elfgcc/bin/i386-elf-gcc -ffreestanding -c src/kernel/kernel.c -o build/kernel.o
-toolchain/bin/i386elfgcc/bin/i386-elf-ld -o build/kernel.bin -T src/link.ld build/kernel_entry.o build/kernel.o --oformat binary
-echo "done"
-echo -n "collecting binaries... "
-cat build/bootloader.bin build/kernel.bin > build/os-image.bin
-echo "done"
-echo "making new diskimage... "
-dd if=/dev/zero of=build/harddisk.img bs=512 count=32768
-dd if=build/bootloader.bin of=build/harddisk.img bs=512 count=1 conv=notrunc
-dd if=build/kernel.bin of=build/harddisk.img bs=512 seek=1 conv=notrunc
+echo -n "doing the dishes... "
 
-# dd if=build/boot.bin of=build/hdd.img conv=notrunc
+rm -rf build
+mkdir build
+(make -C src/kernel clean)
+
 echo "done"
-echo ""
+echo -n "compiling bootloader... "
+
+nasm -o build/boot src/bootloader/boot.asm
+
+echo "done"
+echo -n "compiling kernel... "
+
+(make -C src/kernel) > build/kernel.log
+mv src/kernel/kernel build/kernel
+mv src/kernel/kernel.elf build/kernel.elf
+
+echo "done"
+
+echo "build state"
+ls build
+
+echo "making new diskimage... "
+
+kernel_size=$(wc -c < build/kernel)
+kernel_sectors=$(( ($kernel_size + 511) / 512 ))
+printf %02x $kernel_sectors | xxd -r -p | dd of=build/boot bs=1 seek=2 count=1 conv=notrunc
+
+cp build/boot ./os.img
+cat build/kernel >> os.img
+dd if=/dev/zero bs=1 count=512 >> os.img
+mv os.img build/os.img
+
+echo "done"
+
 echo "BUILD READY"
