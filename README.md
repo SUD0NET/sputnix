@@ -20,3 +20,9 @@ To run using qemu, use:
 chmod +x run.sh
 ./run.sh
 ```
+-------
+
+TODO:
+ - Re-Write Interrupt Stuff
+ - Shell
+ - Proper Memory Allocation 
