@@ -1,3 +1,0 @@
-make: Entering directory '/Users/pgnnat/Documents/GitHub/sputnix/src/kernel'
-rm -f kernel kernel.elf *.o **/*.o
-make: Leaving directory '/Users/pgnnat/Documents/GitHub/sputnix/src/kernel'

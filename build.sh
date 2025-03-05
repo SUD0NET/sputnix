@@ -2,7 +2,7 @@ echo -n "doing the dishes... "
 
 rm -rf build
 mkdir build
-(make -C src/kernel clean) > clean.log
+(make -C src/kernel clean) > logs/clean.log
 
 echo "done"
 echo -n "compiling bootloader... "
@@ -12,7 +12,7 @@ nasm -o build/boot src/bootloader/boot.asm
 echo "done"
 echo -n "compiling kernel... "
 
-(make -C src/kernel) > build/kernel.log
+(make -C src/kernel) > logs/kernel.log
 mv src/kernel/kernel build/kernel
 mv src/kernel/kernel.elf build/kernel.elf
 
@@ -32,7 +32,7 @@ cp build/boot ./os.img
 cat build/kernel >> os.img
 dd if=/dev/zero bs=1 count=512 >> os.img
 mv os.img build/os.img
-) 2>/dev/null
+) 2>logs/diskimg.log
 echo "done"
 
 echo "build finished."

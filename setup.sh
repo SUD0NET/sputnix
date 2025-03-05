@@ -1,11 +1,8 @@
-mkdir toolchain
+mkdir logs
 mkdir build
 
-mkdir toolchain/tmp
-mkdir toolchain/bin
-mkdir toolchain/bin/i386elfgcc
-
-apt -y install \
+sudo apt-get update
+sudo apt -y install \
     build-essential \
     clang \
     curl \
@@ -19,10 +16,3 @@ apt -y install \
     xxd \
     zsh
 
-chmod +x toolchain.sh
-. "$(pwd)/toolchain.sh"
-
-chmod +x toolchain-cleanup.sh
-. "$(pwd)/toolchain-cleanup.sh"
-
-echo "did not install qemu. to install qemu, run install-qemu.sh"
