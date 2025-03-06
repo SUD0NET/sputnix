@@ -188,5 +188,8 @@ void scroll_line(){
 
 void puts(const char *string) {
     // put string on screen without colours
-    putstr(string, COLOR_BLK, COLOR_LCY);
+    // putstr(string, COLOR_BLK, COLOR_LCY);
+
+    // no more miku blue
+    putstr(string, COLOR_BLK, COLOR_WHT);
 }

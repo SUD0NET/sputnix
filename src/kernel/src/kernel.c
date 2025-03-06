@@ -3,7 +3,8 @@
 #include <lib/isr.h>
 #include <lib/idt.h>
 #include <lib/pic.h>
-#include <lib/pit.h>
+#include <lib/ports.h>
+// #include <lib/pit.h>
 
 void program() {
     while (1==1) {
@@ -11,26 +12,46 @@ void program() {
     }
 }
 
+//char waitkey() { 
+   // char k;
+    // while ((k=byte_in(0x60))<128);
+    // while (byte_in(0x60)>128);
+//}
+
 int main() {
-    pic_remap();
-    isr_install();
-    timer_init();
-    pic_mask_all(); // mask the error, pretending it is not there
-    // only unmask required interrupts, remask when done
+    //timer_init();
 
     set_cursor_pos(0, 0);
     clearwin(COLOR_BLK, COLOR_WHT);
 
+    puts("+-------------------------------------+\n");
+
+    puts("|\tRemapping PIC... ");
+    pic_remap();
+    puts("done \t\t|\n");
+
+    puts("|\tInstalling ISR... ");
+    isr_install();
+    puts("done\t\t|\n");
+
+    puts("|\tMasking Interrupts... ");
+    pic_mask_all(); // mask the error, pretending it is not there
+    puts("done \t|\n");
+    // only unmask required interrupts, remask when done
+
+    // __asm__ volatile("sti");
+
+    puts("+-------------------------------------+\n");
     const char *first = "IS THAT MINOS PRIME?!\n";
     putstr(first, COLOR_BLK, COLOR_WHT);
+
+    //waitkey();
+    //puts("ok.\n");
 
     //const char *second = "\nI THINK SO \n";
     //putstr(second, COLOR_RED, COLOR_WHT);
 
-    puts("hi\n");
-
-    
-    __asm__ volatile("int $0");
+    /*__asm__ volatile("int $0");
     __asm__ volatile("int $1");
     __asm__ volatile("int $2");
     __asm__ volatile("int $3");
@@ -38,9 +59,10 @@ int main() {
     __asm__ volatile("int $5");
     __asm__ volatile("int $6");
     __asm__ volatile("int $7");
-    __asm__ volatile("int $8");
+    __asm__ volatile("int $8");*/
     //__asm__ volatile("int $13");
     // __asm__ volatile("int $10");
+    puts("Entering MainLOOP...\n");
     program();
     // 
 
