@@ -1,50 +1,65 @@
-#ifndef ISR_H
-#define ISR_H
+#ifndef __CPU_ISR
+#define __CPU_ISR
 
 #include <types.h>
 
-extern void isr0();
-extern void isr1();
-extern void isr2();
-extern void isr3();
-extern void isr4();
-extern void isr5();
-extern void isr6();
-extern void isr7();
-extern void isr8();
-extern void isr9();
-extern void isr10();
-extern void isr11();
-extern void isr12();
-extern void isr13();
-extern void isr14();
-extern void isr15();
-extern void isr16();
-extern void isr17();
-extern void isr18();
-extern void isr19();
-extern void isr20();
-extern void isr21();
-extern void isr22();
-extern void isr23();
-extern void isr24();
-extern void isr25();
-extern void isr26();
-extern void isr27();
-extern void isr28();
-extern void isr29();
-extern void isr30();
-extern void isr31();
+// Define the ISR's for CPU exceptions
+extern void isr_0();
+extern void isr_1();
+extern void isr_2();
+extern void isr_3();
+extern void isr_4();
+extern void isr_5();
+extern void isr_6();
+extern void isr_7();
+extern void isr_8();
+extern void isr_9();
+extern void isr_10();
+extern void isr_11();
+extern void isr_12();
+extern void isr_13();
+extern void isr_14();
+extern void isr_15();
+extern void isr_16();
+extern void isr_17();
+extern void isr_18();
+extern void isr_19();
+extern void isr_20();
+extern void isr_21();
+extern void isr_22();
+extern void isr_23();
+extern void isr_24();
+extern void isr_25();
+extern void isr_26();
+extern void isr_27();
+extern void isr_28();
+extern void isr_29();
+extern void isr_30();
+extern void isr_31();
 
-/* Struct which aggregates many registers */
-typedef struct {
-   u32_t ds; /* Data segment selector */
-   u32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* Pushed by pusha. */
-   u32_t int_no, err_code; /* Interrupt number and error code (if applicable) */
-   u32_t eip, cs, eflags, useresp, ss; /* Pushed by the processor automatically */
-} registers_t;
 
+// Function to install the ISR's to the IDT and
+// load the IDT to the CPU
 void isr_install();
-void isr_handler(registers_t r);
+
+
+// Structure to push registers when saving for ISR
+typedef struct __attribute__((packed)) {
+    // Define the callee-saved registers
+    u64_t r15, r14, r13, r12, rbp, rbx;
+
+    // Define the callee-clobbered registers
+    u64_t r11, r10, r9, r8, rax, rcx, rdx, rsi, rdi;
+
+    // Define the IRQ Number and the error code
+    u64_t irq_number, error_code;
+
+    // Define the return frame for the iretq call
+    u64_t rip, cs, eflags, rsp, ss;
+} registers;
+
+
+// One handler for all ISR's
+void isr_handler(u64_t isr_number, u64_t error_code, registers* regs);
 
 #endif

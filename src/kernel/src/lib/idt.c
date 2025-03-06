@@ -1,44 +1,35 @@
-/*#include <lib/idt.h>
-#include <lib/util.h>
-
-idt_gate_t idt[IDT_ENTRIES];
-idt_register_t idt_reg;
-
-void set_idt_gate(int n, u32_t handler) {
-    idt[n].low_offset = low_16(handler);
-    idt[n].sel = KERNEL_CS;
-    idt[n].always0 = 0;
-    idt[n].flags = 0x8E; 
-    idt[n].high_offset = high_16(handler);
-}
-
-void set_idt() {
-    idt_reg.base = (u64_t) &idt;
-    idt_reg.limit = IDT_ENTRIES * sizeof(idt_gate_t) - 1;
-    // Don't make the mistake of loading &idt -- always load &idt_reg 
-    __asm__ __volatile__("lidtq (%0)" : : "r" (&idt_reg));
-}*/
-
-
 #include <lib/idt.h>
-#include <lib/util.h>
 
-idt_gate_t idt[IDT_ENTRIES];
-idt_register_t idt_reg;
+// Provide definitions for our extern values
+idt_gate main_idt[IDT_ENTRIES];
+idt_register main_idt_reg;
 
-void set_idt_gate(int n, u64_t handler) { // handler is now u64_t
-    idt[n].low_offset = handler & 0xFFFF;
-    idt[n].sel = KERNEL_CS;
-    idt[n].ist0 = 0; // Interrupt Stack Table
-    idt[n].reserved0 = 0;
-    idt[n].flags = 0x8E; // Present, Ring 0, Interrupt Gate
-    idt[n].mid_offset = (handler >> 16) & 0xFFFF;
-    idt[n].high_offset = (handler >> 32) & 0xFFFFFFFF;
-    idt[n].reserved1 = 0;
+
+// Implement set_idt
+void set_idt(){
+    main_idt_reg.base = (u64_t) &main_idt;
+    main_idt_reg.limit = (IDT_ENTRIES * sizeof(idt_gate)) - 1;
+
+    // Load the value of &main_idt_reg (pointer to IDT register)
+    __asm__ volatile ("lidt (%0)" : : "r" (&main_idt_reg));
 }
 
-void set_idt() {
-    idt_reg.base = (u64_t) &idt;
-    idt_reg.limit = IDT_ENTRIES * sizeof(idt_gate_t) - 1;
-    __asm__ __volatile__("lidtq (%0)" : : "r" (&idt_reg));
+
+// Implement set_idt_gate
+void set_idt_gate(u8_t gate_number, u64_t handler_address){
+    u16_t low_16 = (u16_t) (handler_address & 0xFFFF);
+    u16_t middle_16 = (u16_t) ((handler_address >> 16) & 0xFFFF);
+    u32_t high_32 = (u32_t) ((handler_address >> 32) & 0xFFFFFFFF);
+
+    idt_gate gate = {
+        .base_low = low_16,
+        .cs_selector = KERNEL_CS,
+        .zero = 0,
+        .attributes = INT_ATTR,
+        .base_middle = middle_16,
+        .base_high = high_32,
+        .reserved = 0
+    };
+
+    main_idt[gate_number] = gate;
 }

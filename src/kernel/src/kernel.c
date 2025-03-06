@@ -2,10 +2,20 @@
 #include <lib/util.h>
 #include <lib/isr.h>
 #include <lib/idt.h>
+#include <lib/pic.h>
+
+void program() {
+    while (1==1) {
+        asm("nop");
+    }
+}
 
 int main() {
+    pic_remap();
     isr_install();
-    set_cursor_pos(0, 0);
+
+
+    /*set_cursor_pos(0, 0);
     clearwin(COLOR_BLK, COLOR_WHT);
 
     const char *first = "IS THAT MINOS PRIME?!";
@@ -19,9 +29,10 @@ int main() {
     __asm__ __volatile__("int $2");
     __asm__ __volatile__("int $3");
 
-    while (1 == 1) {
-
-    }
+    */
+    
+    program();
+    // __asm__ volatile("int $3");
 
     return 0;
 }

@@ -1,60 +1,23 @@
+
 #include <lib/isr.h>
 #include <lib/idt.h>
 #include <lib/vga.h>
-#include <lib/util.h>
 
-void isr_install() {
-    set_idt_gate(0, (u32_t)isr0);
-    set_idt_gate(1, (u32_t)isr1);
-    set_idt_gate(2, (u32_t)isr2);
-    set_idt_gate(3, (u32_t)isr3);
-    set_idt_gate(4, (u32_t)isr4);
-    set_idt_gate(5, (u32_t)isr5);
-    set_idt_gate(6, (u32_t)isr6);
-    set_idt_gate(7, (u32_t)isr7);
-    set_idt_gate(8, (u32_t)isr8);
-    set_idt_gate(9, (u32_t)isr9);
-    set_idt_gate(10, (u32_t)isr10);
-    set_idt_gate(11, (u32_t)isr11);
-    set_idt_gate(12, (u32_t)isr12);
-    set_idt_gate(13, (u32_t)isr13);
-    set_idt_gate(14, (u32_t)isr14);
-    set_idt_gate(15, (u32_t)isr15);
-    set_idt_gate(16, (u32_t)isr16);
-    set_idt_gate(17, (u32_t)isr17);
-    set_idt_gate(18, (u32_t)isr18);
-    set_idt_gate(19, (u32_t)isr19);
-    set_idt_gate(20, (u32_t)isr20);
-    set_idt_gate(21, (u32_t)isr21);
-    set_idt_gate(22, (u32_t)isr22);
-    set_idt_gate(23, (u32_t)isr23);
-    set_idt_gate(24, (u32_t)isr24);
-    set_idt_gate(25, (u32_t)isr25);
-    set_idt_gate(26, (u32_t)isr26);
-    set_idt_gate(27, (u32_t)isr27);
-    set_idt_gate(28, (u32_t)isr28);
-    set_idt_gate(29, (u32_t)isr29);
-    set_idt_gate(30, (u32_t)isr30);
-    set_idt_gate(31, (u32_t)isr31);
-
-    set_idt(); // Load with ASM
-}
-
-/* To print the message which defines every exception */
+// Give string values for each exception
 char *exception_messages[] = {
-    "Division By Zero",
+    "Division by Zero",
     "Debug",
-    "Non Maskable Interrupt",
+    "Non-Maskable Interrupt",
     "Breakpoint",
-    "Into Detected Overflow",
+    "Overflow",
     "Out of Bounds",
     "Invalid Opcode",
     "No Coprocessor",
 
     "Double Fault",
     "Coprocessor Segment Overrun",
-    "Bad TSS",
-    "Segment Not Present",
+    "Bat TSS",
+    "Segment not Present",
     "Stack Fault",
     "General Protection Fault",
     "Page Fault",
@@ -79,12 +42,51 @@ char *exception_messages[] = {
     "Reserved"
 };
 
-void isr_handler(registers_t r) {
-    puts("received interrupt: ");
-    char s[3];
-    int_to_ascii(r.int_no, s);
-    puts(s);
-    puts("\n");
-    puts(exception_messages[r.int_no]);
-    puts("\n");
+
+// Install the ISR's to the IDT
+void isr_install(){
+    set_idt_gate(0, (u64_t) isr_0);
+    set_idt_gate(1, (u64_t) isr_1);
+    set_idt_gate(2, (u64_t) isr_2);
+    set_idt_gate(3, (u64_t) isr_3);
+    set_idt_gate(4, (u64_t) isr_4);
+    set_idt_gate(5, (u64_t) isr_5);
+    set_idt_gate(6, (u64_t) isr_6);
+    set_idt_gate(7, (u64_t) isr_7);
+    set_idt_gate(8, (u64_t) isr_8);
+    set_idt_gate(9, (u64_t) isr_9);
+    set_idt_gate(10, (u64_t) isr_10);
+    set_idt_gate(11, (u64_t) isr_11);
+    set_idt_gate(12, (u64_t) isr_12);
+    set_idt_gate(13, (u64_t) isr_13);
+    set_idt_gate(14, (u64_t) isr_14);
+    set_idt_gate(15, (u64_t) isr_15);
+    set_idt_gate(16, (u64_t) isr_16);
+    set_idt_gate(17, (u64_t) isr_17);
+    set_idt_gate(18, (u64_t) isr_18);
+    set_idt_gate(19, (u64_t) isr_19);
+    set_idt_gate(20, (u64_t) isr_20);
+    set_idt_gate(21, (u64_t) isr_21);
+    set_idt_gate(22, (u64_t) isr_22);
+    set_idt_gate(23, (u64_t) isr_23);
+    set_idt_gate(24, (u64_t) isr_24);
+    set_idt_gate(25, (u64_t) isr_25);
+    set_idt_gate(26, (u64_t) isr_26);
+    set_idt_gate(27, (u64_t) isr_27);
+    set_idt_gate(28, (u64_t) isr_28);
+    set_idt_gate(29, (u64_t) isr_29);
+    set_idt_gate(30, (u64_t) isr_30);
+    set_idt_gate(31, (u64_t) isr_31);
+
+    // Load the IDT to the CPU
+    set_idt();
+
+    // Enable Interrupts
+    __asm__ volatile("sti");
+}
+
+__attribute__((sysv_abi))
+void isr_handler(u64_t isr_number, u64_t error_code, registers* regs) {
+    const char* message = exception_messages[isr_number];
+    putstr(message, COLOR_WHT, COLOR_RED);
 }
