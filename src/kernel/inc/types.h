@@ -17,4 +17,7 @@ typedef unsigned int u32_t;
 typedef signed long i64_t;
 typedef unsigned long u64_t;
 
+#define low_16(address) (u16_t)((address) & 0xFFFF)
+#define high_16(address) (u16_t)(((address) >> 16) & 0xFFFF)
+
 #endif
