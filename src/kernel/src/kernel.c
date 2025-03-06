@@ -9,15 +9,14 @@
 int main(){
     isr_install();
 
-
     set_cursor_pos(0, 0);
     clearwin(COLOR_BLK, COLOR_WHT);
 
     const char *first = "IS THAT MINOS PRIME?!";
     putstr(first, COLOR_BLK, COLOR_WHT);
 
-    const char *second = "\nI THINK SO \n(spec char test ß)\n";
+    const char *second = "\nI THINK SO \n";
     putstr(second, COLOR_RED, COLOR_WHT);
-    
+
     return 0;
 }
