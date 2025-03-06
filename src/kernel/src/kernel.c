@@ -3,36 +3,47 @@
 #include <lib/isr.h>
 #include <lib/idt.h>
 #include <lib/pic.h>
+#include <lib/pit.h>
 
 void program() {
     while (1==1) {
-        asm("nop");
+        // volatile int xyz = 0;
     }
 }
 
 int main() {
     pic_remap();
     isr_install();
+    timer_init();
+    pic_mask_all(); // mask the error, pretending it is not there
+    // only unmask required interrupts, remask when done
 
-
-    /*set_cursor_pos(0, 0);
+    set_cursor_pos(0, 0);
     clearwin(COLOR_BLK, COLOR_WHT);
 
-    const char *first = "IS THAT MINOS PRIME?!";
+    const char *first = "IS THAT MINOS PRIME?!\n";
     putstr(first, COLOR_BLK, COLOR_WHT);
 
-    const char *second = "\nI THINK SO \n";
-    putstr(second, COLOR_RED, COLOR_WHT);
+    //const char *second = "\nI THINK SO \n";
+    //putstr(second, COLOR_RED, COLOR_WHT);
 
-    puts("hi");
+    puts("hi\n");
 
-    __asm__ __volatile__("int $2");
-    __asm__ __volatile__("int $3");
-
-    */
     
+    __asm__ volatile("int $0");
+    __asm__ volatile("int $1");
+    __asm__ volatile("int $2");
+    __asm__ volatile("int $3");
+    __asm__ volatile("int $4");
+    __asm__ volatile("int $5");
+    __asm__ volatile("int $6");
+    __asm__ volatile("int $7");
+    __asm__ volatile("int $8");
+    //__asm__ volatile("int $13");
+    // __asm__ volatile("int $10");
     program();
-    // __asm__ volatile("int $3");
+    // 
+
 
     return 0;
 }

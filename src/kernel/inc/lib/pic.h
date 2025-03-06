@@ -14,5 +14,6 @@ void pic_mask_all();
 void pic_mask_irq(u8_t irq);
 void pic_unmask_irq(u8_t irq);
 void pic_send_eoi(u8_t irq);
+void pic_unmask_all();
 
 #endif // PIC_H

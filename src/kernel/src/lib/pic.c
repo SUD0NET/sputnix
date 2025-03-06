@@ -2,17 +2,14 @@
 #include <lib/ports.h>
 #include <lib/pic.h>
 
-// PIC ports
 #define PIC1_CTRL 0x20 // Master PIC control port
 #define PIC1_DATA 0x21 // Master PIC data port
 #define PIC2_CTRL 0xA0 // Slave PIC control port
 #define PIC2_DATA 0xA1 // Slave PIC data port
 
-// Assuming your I/O functions are defined elsewhere
 extern u8_t byte_in(u16_t port);
 extern void byte_out(u16_t port, u8_t data);
 
-// Function to add a small delay
 static void io_wait() {
     byte_out(0x80, 0); // Short delay via port 0x80
     byte_out(0x80, 0);
@@ -65,6 +62,12 @@ void pic_remap() {
 void pic_mask_all() {
     byte_out(PIC1_DATA, 0xFF);
     byte_out(PIC2_DATA, 0xFF);
+}
+
+// Unmask all IRQs
+void pic_unmask_all() {
+    byte_out(PIC1_DATA, 0x00);
+    byte_out(PIC2_DATA, 0x00);
 }
 
 // Mask a specific IRQ.

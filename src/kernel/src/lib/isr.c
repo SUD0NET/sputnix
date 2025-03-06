@@ -2,6 +2,7 @@
 #include <lib/isr.h>
 #include <lib/idt.h>
 #include <lib/vga.h>
+#include <lib/util.h>
 
 // Give string values for each exception
 char *exception_messages[] = {
@@ -58,7 +59,10 @@ void isr_install(){
     set_idt_gate(10, (u64_t) isr_10);
     set_idt_gate(11, (u64_t) isr_11);
     set_idt_gate(12, (u64_t) isr_12);
+
+    // this one is fucked: 
     set_idt_gate(13, (u64_t) isr_13);
+
     set_idt_gate(14, (u64_t) isr_14);
     set_idt_gate(15, (u64_t) isr_15);
     set_idt_gate(16, (u64_t) isr_16);
@@ -88,5 +92,9 @@ void isr_install(){
 __attribute__((sysv_abi))
 void isr_handler(u64_t isr_number, u64_t error_code, registers* regs) {
     const char* message = exception_messages[isr_number];
+    char* num = "";
+    int_to_ascii(isr_number, num);
+    puts(num);
     putstr(message, COLOR_WHT, COLOR_RED);
+    puts("\n");
 }
