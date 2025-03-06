@@ -3,12 +3,9 @@
 // WILL BE CHANGED
 // THIS IS FOR TESTING ONLY
 
-#include <lib/isr.h>
 #include <lib/vga.h>
 
-int main(){
-    isr_install();
-
+int main() {
     set_cursor_pos(0, 0);
     clearwin(COLOR_BLK, COLOR_WHT);
 
