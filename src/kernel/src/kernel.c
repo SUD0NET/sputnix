@@ -51,7 +51,7 @@ int main() {
     //const char *second = "\nI THINK SO \n";
     //putstr(second, COLOR_RED, COLOR_WHT);
 
-    /*__asm__ volatile("int $0");
+    __asm__ volatile("int $0");
     __asm__ volatile("int $1");
     __asm__ volatile("int $2");
     __asm__ volatile("int $3");
@@ -59,7 +59,7 @@ int main() {
     __asm__ volatile("int $5");
     __asm__ volatile("int $6");
     __asm__ volatile("int $7");
-    __asm__ volatile("int $8");*/
+    __asm__ volatile("int $8");
     //__asm__ volatile("int $13");
     // __asm__ volatile("int $10");
     puts("Entering MainLOOP...\n");

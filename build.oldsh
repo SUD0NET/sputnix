@@ -35,11 +35,4 @@ mv os.img build/os.img
 ) 2>logs/diskimg.log
 echo "done"
 
-echo -n "generating ISO... "
-
-# Generate the .iso file from the .img
-genisoimage -o build/os.iso -b os.img build > logs/iso.log 2>&1
-
-echo "done"
-
 echo "build finished."
